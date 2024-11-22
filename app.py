@@ -22,7 +22,7 @@ if st.button("Crear nueva Sesión"):
 
         if respuesta_json.get("success"):
             st.session_state["thread_id"] = respuesta_json["data"].get("thread_id")
-            st.success(f"Nueva sesión creada con ID: {st.session_state['thread_id']}")
+            st.success(f"Nueva sesión creada")
             st.session_state.messages = []  # Reiniciar historial de chat
         else:
             st.error(f"Error en la respuesta: {respuesta_json.get('message', 'Desconocido')}")
