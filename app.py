@@ -15,7 +15,7 @@ st.subheader("Crear Sesión")
 if st.button("Crear nueva Sesión"):
     try:
         # Llamada al endpoint para crear una nueva sesión
-        create_thread_url = "https://cr-lab-chatbot-legal-624205664083.us-central1.run.app/api/chatbot/create_thread"
+        create_thread_url = "http://127.0.0.1:5000/api/chatbot/create_thread"
         response = requests.post(create_thread_url)
         response.raise_for_status()
         respuesta_json = response.json()
@@ -45,19 +45,36 @@ if st.session_state["thread_id"]:
 
         try:
             # Llamada al endpoint del chatbot para obtener la respuesta
-            chat_url = "https://cr-lab-chatbot-legal-624205664083.us-central1.run.app/api/chatbot/run_assistant"
+            chat_url = "http://127.0.0.1:5000/api/chatbot/run_assistant"
             payload = {"thread_id": st.session_state["thread_id"], "message": prompt}
             response = requests.post(chat_url, json=payload)
             response.raise_for_status()
             respuesta_json = response.json()
 
             if respuesta_json.get("success"):
-                bot_reply = respuesta_json["data"].get("result", "Sin respuesta")
+                content = respuesta_json["data"].get("content", "Sin respuesta")
+                citations = respuesta_json["data"].get("citations", [])
+                citations_results = respuesta_json["data"].get("citations_results", [])
+
+                print("content", content)
+                print("citations", citations)
+                print("citations_results", citations_results)
+
+
+                bot_reply = content
                 st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
                 # Mostrar respuesta del bot
                 with st.chat_message("assistant"):
                     st.markdown(bot_reply)
+
+                    # Mostrar citas debajo de la respuesta del bot
+                    if citations:
+                        st.markdown("### Referencias:")
+                        for idx, citation in enumerate(citations):
+                            # Crear un expander para cada cita y mostrar el contenido correspondiente
+                            with st.expander(f"{citation}"):
+                                st.markdown(citations_results[idx])
             else:
                 st.error(f"Error en la respuesta: {respuesta_json.get('message', 'Desconocido')}")
         except Exception as e:
