@@ -52,12 +52,29 @@ if st.session_state["thread_id"]:
             respuesta_json = response.json()
 
             if respuesta_json.get("success"):
-                bot_reply = respuesta_json["data"].get("result", "Sin respuesta")
+                content = respuesta_json["data"].get("content", "Sin respuesta")
+                citations = respuesta_json["data"].get("citations", [])
+                citations_results = respuesta_json["data"].get("citations_results", [])
+
+                print("content", content)
+                print("citations", citations)
+                print("citations_results", citations_results)
+
+
+                bot_reply = content
                 st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
                 # Mostrar respuesta del bot
                 with st.chat_message("assistant"):
                     st.markdown(bot_reply)
+
+                    # Mostrar citas debajo de la respuesta del bot
+                    if citations:
+                        st.markdown("### Referencias:")
+                        for idx, citation in enumerate(citations):
+                            # Crear un expander para cada cita y mostrar el contenido correspondiente
+                            with st.expander(f"{citation}"):
+                                st.markdown(citations_results[idx])
             else:
                 st.error(f"Error en la respuesta: {respuesta_json.get('message', 'Desconocido')}")
         except Exception as e:
