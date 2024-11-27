@@ -15,7 +15,7 @@ st.subheader("Crear Sesión")
 if st.button("Crear nueva Sesión"):
     try:
         # Llamada al endpoint para crear una nueva sesión
-        create_thread_url = "http://127.0.0.1:5000/api/chatbot/create_thread"
+        create_thread_url = "https://cr-lab-chatbot-legal-624205664083.us-central1.run.app/api/chatbot/create_thread"
         response = requests.post(create_thread_url)
         response.raise_for_status()
         respuesta_json = response.json()
@@ -45,7 +45,7 @@ if st.session_state["thread_id"]:
 
         try:
             # Llamada al endpoint del chatbot para obtener la respuesta
-            chat_url = "http://127.0.0.1:5000/api/chatbot/run_assistant"
+            chat_url = "https://cr-lab-chatbot-legal-624205664083.us-central1.run.app/api/chatbot/run_assistant"
             payload = {"thread_id": st.session_state["thread_id"], "message": prompt}
             response = requests.post(chat_url, json=payload)
             response.raise_for_status()
